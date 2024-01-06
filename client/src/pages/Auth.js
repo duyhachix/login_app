@@ -51,7 +51,6 @@ function Auth() {
 			let response = await axios.post('http://localhost:3030/api/users/login', loginInfo);
 			if (response.status === 201) {
 				const { password, email } = response.data; // Replace with your actual response structure
-				console.log(response);
 				toast.success('Login successfully', {
 					position: 'top-right',
 					autoClose: 3000,
@@ -66,7 +65,6 @@ function Auth() {
 			}
 		} catch (error) {
 			// Xử lý lỗi từ API
-			console.log(error);
 			toast.error(`${error.message}`, {
 				position: 'top-right',
 				autoClose: 1000,
