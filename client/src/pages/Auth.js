@@ -1,20 +1,34 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 // import libraries
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import InputGroup from 'react-bootstrap/InputGroup';
+import { Eye, EyeSlashFill } from 'react-bootstrap-icons';
+
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-// import InputGroup from 'react-bootstrap/InputGroup';
 import axios from 'axios';
 
 function Auth() {
 	// state
+	const navigate = useNavigate();
 	let [isLogin, setIsLogin] = useState(true);
 
 	let [email, setEmail] = useState('');
 	let [password, setPassword] = useState('');
 	let [newEmail, setNewEmail] = useState('');
 	let [newPassword, setNewPassword] = useState('');
+
+	let [showPassword, setShowPassword] = useState(false);
+	let [showPasswordSignup, setShowPasswordSignup] = useState(false);
+
+	function togglePasswordLogin() {
+		setShowPassword((prev) => !prev);
+	}
+	function togglePasswordSignup() {
+		setShowPasswordSignup((prev) => !prev);
+	}
 
 	function toLoginForm() {
 		setIsLogin(true);
@@ -27,21 +41,42 @@ function Auth() {
 	 * submit login form event handler
 	 * @param {Event} e
 	 */
-	async function handleSubmit(e) {
+	async function handleLogin(e) {
 		e.preventDefault();
 		let loginInfo = {
 			email: email,
 			password: password,
 		};
-		console.log(loginInfo);
 		try {
-			let response = await axios.post(`http://localhost:3030/api/users/${email}`, loginInfo);
-			if (response) {
+			let response = await axios.post('http://localhost:3030/api/users/login', loginInfo);
+			if (response.status === 201) {
+				const { password, email } = response.data; // Replace with your actual response structure
 				console.log(response);
+				toast.success('Login successfully', {
+					position: 'top-right',
+					autoClose: 3000,
+					hideProgressBar: false,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: 'colored',
+				});
+				navigate('/home', { state: { password, email } });
 			}
 		} catch (error) {
 			// Xử lý lỗi từ API
-			console.error(`You may encounter ${error}`);
+			console.log(error);
+			toast.error(`${error.message}`, {
+				position: 'top-right',
+				autoClose: 1000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: 'colored',
+			});
 		}
 	}
 
@@ -120,11 +155,11 @@ function Auth() {
 				</div>
 				{isLogin ? (
 					// login form
-					<div className="login-form w-100 p-4">
+					<div className="login-form w-100 p-4 text-center">
 						<h2>
 							<strong className="text-primary">Login into your account</strong>
 						</h2>
-						<Form onSubmit={handleSubmit}>
+						<Form onSubmit={handleLogin}>
 							<Form.Group className="mb-3 text-start" controlId="formGroupEmail">
 								<Form.Label className="fs-5">Email address</Form.Label>
 								<Form.Control
@@ -138,14 +173,19 @@ function Auth() {
 							</Form.Group>
 							<Form.Group className="mb-3 text-start" controlId="formGroupPassword">
 								<Form.Label className="fs-5">Password</Form.Label>
-								<Form.Control
-									value={password}
-									onChange={(e) => {
-										setPassword(e.target.value);
-									}}
-									type="password"
-									placeholder="Enter password"
-								/>
+								<div className="d-flex gap-2">
+									<Form.Control
+										value={password}
+										onChange={(e) => {
+											setPassword(e.target.value);
+										}}
+										type={!showPassword ? 'password' : 'text'}
+										placeholder="Enter password"
+									/>
+									<InputGroup.Text style={{ cursor: 'pointer' }} onClick={togglePasswordLogin}>
+										{showPassword ? <EyeSlashFill /> : <Eye />}
+									</InputGroup.Text>
+								</div>
 							</Form.Group>
 							<Button variant="primary" type="submit" disabled={!email || !password}>
 								Login
@@ -154,7 +194,7 @@ function Auth() {
 					</div>
 				) : (
 					// Sign up form
-					<div className="signup-form w-100 p-4">
+					<div className="signup-form w-100 p-4 text-center">
 						<h2>
 							<strong className="text-warning">Create a new account</strong>
 						</h2>
@@ -172,14 +212,19 @@ function Auth() {
 							</Form.Group>
 							<Form.Group className="mb-3 text-start" controlId="formGroupNewPassword">
 								<Form.Label className="fs-5">Password</Form.Label>
-								<Form.Control
-									value={newPassword}
-									onChange={(e) => {
-										setNewPassword(e.target.value);
-									}}
-									type="password"
-									placeholder="Enter new password"
-								/>
+								<div className="d-flex gap-2">
+									<Form.Control
+										value={newPassword}
+										onChange={(e) => {
+											setNewPassword(e.target.value);
+										}}
+										type={!showPasswordSignup ? 'password' : 'text'}
+										placeholder="Enter new password"
+									/>
+									<InputGroup.Text style={{ cursor: 'pointer' }} onClick={togglePasswordSignup}>
+										{showPasswordSignup ? <EyeSlashFill /> : <Eye />}
+									</InputGroup.Text>
+								</div>
 							</Form.Group>
 							<Button variant="warning" type="submit" disabled={!newEmail || !newPassword}>
 								Sign up
