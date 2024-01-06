@@ -1,11 +1,10 @@
-import logo from './logo.svg';
-import Login from '../src/pages/Login';
+import Auth from '../src/pages/Auth';
 import './App.css';
 
 function App() {
 	return (
 		<div className="App d-flex justify-content-center">
-			<Login />
+			<Auth />
 		</div>
 	);
 }
