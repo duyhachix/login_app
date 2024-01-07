@@ -50,8 +50,8 @@ function Auth() {
 		try {
 			let response = await axios.post('http://localhost:3030/api/users/login', loginInfo);
 			if (response.status === 201) {
-				const { password, email } = response.data; // Replace with your actual response structure
-				toast.success('Login successfully', {
+				const { password, email } = response.data?.content; // Replace with your actual response structure
+				toast.success(response.data?.message, {
 					position: 'top-right',
 					autoClose: 3000,
 					hideProgressBar: false,
@@ -90,9 +90,9 @@ function Auth() {
 		};
 
 		try {
-			let response = await axios.post(`http://localhost:3030/api/users/create-user`, signUpInfo);
+			let response = await axios.post(`http://localhost:3030/api/users/sign-up`, signUpInfo);
 			if (response.status === 201) {
-				toast.success('New account created', {
+				toast.success(response.data?.message, {
 					position: 'top-right',
 					autoClose: 2000,
 					hideProgressBar: false,
