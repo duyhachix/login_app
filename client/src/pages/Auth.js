@@ -48,7 +48,7 @@ function Auth() {
 			password: password,
 		};
 		try {
-			let response = await axios.post('http://localhost:3030/api/users/login', loginInfo);
+			let response = await axios.post('http://localhost:3030/user/login', loginInfo);
 			if (response.status === 201) {
 				const { password, email } = response.data?.content; // Replace with your actual response structure
 				toast.success(response.data?.message, {
@@ -90,7 +90,7 @@ function Auth() {
 		};
 
 		try {
-			let response = await axios.post(`http://localhost:3030/api/users/sign-up`, signUpInfo);
+			let response = await axios.post(`http://localhost:3030/user/sign-up`, signUpInfo);
 			if (response.status === 201) {
 				toast.success(response.data?.message, {
 					position: 'top-right',
